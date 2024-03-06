@@ -1,0 +1,20 @@
+{
+  "name": "ejemplo-node",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "ejemplo para node",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node"
+  ],
+  "author": "javilejo",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "mysql2": "^3.9.2"
+  }
+}
