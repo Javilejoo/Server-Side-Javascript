@@ -13,32 +13,43 @@ app.get('/', (req, res) => {
 
 //obtener todos los character
 app.get('/characters', async (req, res) => {
-  const posts = await getAllCharacters()
-  res.json(posts)
+  const character = await getAllCharacters()
+  res.json(character)
 })
 
-//crear un character
+// Crear un character
 app.post('/characters', async (req, res) => {
-  const posts = await createCharacters(req.body.name, req.body.epithet, req.body.occupation, req.body.bounty, req.body.devil_fruit, req.body.image_url, req.body.description)
-  res.json(posts)
+  try {
+    const character = await createCharacters(req.body.name, req.body.age, req.body.epithet, req.body.occupation, req.body.bounty, req.body.devil_fruit, req.body.image_url, req.body.image_base64, req.body.description)
+    // Verifica si se creó correctamente y devuelve el personaje con status 200
+    res.status(200).json(character) // Incluimos el status 200 aquí
+  } catch (error) {
+    // Manejo de errores
+    res.status(500).json({ error: error.message })
+  }
 })
 
-//obtener un character por id
-app.post('/characters/:id', async (req, res) => {
-  const posts = await getCharacterById(req.params.id)
-  res.json(posts)
+
+// Obtener un character por id
+app.get('/characters/:id', async (req, res) => {
+  try {
+    const character = await getCharacterById(req.params.id)
+    res.status(200).json(character) // Responder con el personaje encontrado
+  } catch (error) {
+    res.status(500).json({ error: error.message })// Manejar errores
+  }
 })
 
 //borrar un character
 app.delete('/characters/:id', async (req, res) => {
-  const post = await deleteCharacterById(req.params.id)
-  res.json(post)
+  const character = await deleteCharacterById(req.params.id)
+  res.json(character)
 })
 
 //actualizar un character
 app.put('/characters/:id', async (req, res) => {
-  const posts = await updateCharacterById(req.params.id, req.body.name, req.body.epithet, req.body.occupation, req.body.bounty, req.body.devil_fruit, req.body.image_url, req.body.description)
-  res.json(posts)
+  const character = await updateCharacterById(req.params.id, req.body.name, req.body.age, req.body.epithet, req.body.occupation, req.body.bounty, req.body.devil_fruit, req.body.image_url, req.body.image_base64, req.body.description)
+  res.json(character)
 })
 
 app.listen(port, () => {

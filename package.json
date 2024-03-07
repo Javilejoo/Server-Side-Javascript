@@ -5,8 +5,9 @@
   "description": "ejemplo para node",
   "main": "main.js",
   "scripts": {
-    "start": "node main.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node src/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint ."
   },
   "keywords": [
     "node"
@@ -17,5 +18,10 @@
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "mysql2": "^3.9.2"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.29.1"
   }
 }
