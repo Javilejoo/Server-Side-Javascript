@@ -1,6 +1,8 @@
 import express from 'express'
 import cors from 'cors'
-import { getAllCharacters, getCharacterById, createCharacter, deleteCharacterById, updateCharacterById } from './db.js'
+import {
+  getAllCharacters, getCharacterById, createCharacter, deleteCharacterById, updateCharacterById,
+} from './db.js'
 
 const app = express()
 app.use(express.json())
@@ -50,7 +52,6 @@ app.post('/posts', async (req, res) => {
   }
 })
 
-
 // Ruta para borrar un post por su ID
 app.delete('/posts/:postId', async (req, res) => {
   const postId = req.params.postId
@@ -82,11 +83,21 @@ app.put('/characters/:id', async (req, res) => {
       req.body.imageBase64,
       req.body.description,
     )
-    res.status(character.status).json({ status: character.status, data: character.data }) // Enviamos el código de estado y los datos del personaje actualizado
+    res.status(character.status).json({ status: character.status, data: character.data })
   } catch (error) {
     console.error('Error al actualizar el personaje:', error)
     res.status(error.status || 500).json({ status: error.status || 500, data: error.data || { error: 'Error en el servidor' } }) // Enviamos el código de estado y el mensaje de error
   }
+})
+
+// Middleware para manejar rutas no encontradas
+app.use((req, res) => {
+  res.status(400).json({ error: 'Ruta no encontrada' })
+})
+
+// Middleware para manejar métodos HTTP no implementados
+app.use((req, res) => {
+  res.status(501).json({ error: 'Método HTTP no implementado' })
 })
 
 app.listen(port, () => {

@@ -1,7 +1,7 @@
 import conn from './conn.js'
 // Trae todos los characters de one piece
 export async function getAllCharacters() {
-  try{
+  try {
     const [rows] = await conn.query('SELECT * FROM characters')
     return { status: 200, data: rows }
   } catch (e) {
@@ -22,28 +22,38 @@ export async function getCharacterById(id) {
 }
 
 // Crear un personaje
-export async function createCharacter(name, age, epithet, occupation, bounty, devilFruit, imageUrl, imageBase64, description) {
+export async function createCharacter(
+  name,
+  age,
+  epithet,
+  occupation,
+  bounty,
+  devilFruit,
+  imageUrl,
+  imageBase64,
+  description,
+) {
   try {
     // Validar que se hayan proporcionado todos los campos necesarios
-    if (!name || !age || !epithet || !occupation || !bounty || !devilFruit || !imageUrl || !imageBase64 || !description) {
+    if (!name || !age || !epithet || !occupation || !bounty || !devilFruit || !imageUrl
+      || !imageBase64 || !description) {
       throw { status: 400, data: { error: 'Se deben proporcionar todos los campos' } }
     }
 
     const [result] = await conn.query(
       'INSERT INTO characters (name, age, epithet, occupation, bounty, devilFruit, imageUrl, imageBase64, description) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [name, age, epithet, occupation, bounty, devilFruit, imageUrl, imageBase64, description],
-    );
+    )
 
     // Obtener el personaje recién creado
     const [createdCharacter] = await conn.query('SELECT * FROM characters WHERE id = ?', [result.insertId])
-
-    return { status: 200, data: createdCharacter }; // Devolver el estado 201 (Created) y los datos del personaje creado
+    return { status: 200, data: createdCharacter }
   } catch (error) {
     console.error('Error al crear el personaje en la base de datos:', error)
     if (error.status) {
-      throw error; // Re-lanzamos el error con el código de estado apropiado
+      throw error // Re-lanzamos el error con el código de estado apropiado
     } else {
-      throw { status: 500, data: { error: 'Error en el servidor' } }; // En caso de error desconocido, retornamos 500
+      throw { status: 500, data: { error: 'Error en el servidor' } } // En caso de error desconocido, retornamos 500
     }
   }
 }
@@ -78,7 +88,8 @@ export async function updateCharacterById(
 ) {
   try {
     // Validar que se hayan proporcionado todos los campos necesarios
-    if (!name || !age || !epithet || !occupation || !bounty || !devilFruit || !imageUrl || !imageBase64 || !description) {
+    if (!name || !age || !epithet || !occupation || !bounty
+      || !devilFruit || !imageUrl || !imageBase64 || !description) {
       throw { status: 400, data: { error: 'Se deben proporcionar todos los campos' } }
     }
 
@@ -96,11 +107,11 @@ export async function updateCharacterById(
 
     // Consultar el personaje actualizado
     const [characterResult] = await conn.query('SELECT * FROM characters WHERE id = ?', [id])
-    return { data: characterResult[0], status: 200}
+    return { data: characterResult[0], status: 200 }
   } catch (error) {
     console.error('Error al actualizar el personaje en la base de datos:', error)
     if (error.status) {
-      throw error; // Re-lanzamos el error con el código de estado apropiado
+      throw error // Re-lanzamos el error con el código de estado apropiado
     } else {
       throw { status: 500, data: { error: 'Error en el servidor' } } // En caso de error desconocido, retornamos 500
     }
