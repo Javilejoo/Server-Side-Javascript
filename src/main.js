@@ -1,5 +1,7 @@
 import express from 'express'
 import cors from 'cors'
+import swaggerJsdoc from 'swagger-jsdoc'
+import swaggerUi from 'swagger-ui-express'
 import {
   getAllCharacters, getCharacterById, createCharacter, deleteCharacterById, updateCharacterById,
 } from './db.js'
@@ -9,11 +11,45 @@ app.use(express.json())
 app.use(cors())
 const port = 3010
 
+// Configuración de Swagger
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'API de Personajes de One Piece',
+      version: '1.0.0',
+      description: 'Una API para administrar personajes de One Piece.',
+    },
+  },
+  apis: ['./main.js'],
+}
+
+const specs = swaggerJsdoc(options)
+
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs))
+
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-// Ruta para obtener todos los personajes
+/**
+ * @swagger
+ * /posts:
+ *   get:
+ *     summary: Obtiene todos los personajes
+ *     description: Endpoint para obtener todos los personajes.
+ *     responses:
+ *       200:
+ *         description: Lista de personajes obtenida correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Character'
+ *       500:
+ *         description: Error en el servidor.
+ */
 app.get('/posts', async (req, res) => {
   try {
     const characters = await getAllCharacters()
@@ -24,13 +60,60 @@ app.get('/posts', async (req, res) => {
   }
 })
 
-// obtener un character por su id
+/**
+ * @swagger
+ * /posts/{id}:
+ *   get:
+ *     summary: Obtiene un personaje por su ID
+ *     description: Endpoint para obtener un personaje por su ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del personaje a obtener.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Personaje obtenido correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Character'
+ *       404:
+ *         description: Personaje no encontrado.
+ *       500:
+ *         description: Error en el servidor.
+ */
 app.get('/posts/:id', async (req, res) => {
   const character = await getCharacterById(req.params.id)
   res.json(character)
 })
 
-// Crear un personaje
+/**
+ * @swagger
+ * /posts:
+ *   post:
+ *     summary: Crea un nuevo personaje
+ *     description: Endpoint para crear un nuevo personaje.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/NewCharacter'
+ *     responses:
+ *       200:
+ *         description: Personaje creado correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Character'
+ *       400:
+ *         description: Error de validación de la solicitud.
+ *       500:
+ *         description: Error en el servidor.
+ */
 app.post('/posts', async (req, res) => {
   try {
     const character = await createCharacter(
@@ -52,7 +135,27 @@ app.post('/posts', async (req, res) => {
   }
 })
 
-// Ruta para borrar un post por su ID
+/**
+ * @swagger
+ * /posts/{postId}:
+ *   delete:
+ *     summary: Elimina un personaje por su ID
+ *     description: Endpoint para eliminar un personaje por su ID.
+ *     parameters:
+ *       - in: path
+ *         name: postId
+ *         required: true
+ *         description: ID del personaje a eliminar.
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Personaje eliminado correctamente.
+ *       404:
+ *         description: Personaje no encontrado.
+ *       500:
+ *         description: Error en el servidor.
+ */
 app.delete('/posts/:postId', async (req, res) => {
   const postId = req.params.postId
   try {
@@ -68,7 +171,39 @@ app.delete('/posts/:postId', async (req, res) => {
   }
 })
 
-// Actualiza un personaje
+/**
+ * @swagger
+ * /characters/{id}:
+ *   put:
+ *     summary: Actualiza un personaje por su ID
+ *     description: Endpoint para actualizar un personaje por su ID.
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: ID del personaje a actualizar.
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateCharacter'
+ *     responses:
+ *       200:
+ *         description: Personaje actualizado correctamente.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Character'
+ *       400:
+ *         description: Error de validación de la solicitud.
+ *       404:
+ *         description: Personaje no encontrado.
+ *       500:
+ *         description: Error en el servidor.
+ */
 app.put('/characters/:id', async (req, res) => {
   try {
     const character = await updateCharacterById(
@@ -90,12 +225,30 @@ app.put('/characters/:id', async (req, res) => {
   }
 })
 
-// Middleware para manejar rutas no encontradas
+/**
+ * @swagger
+ * /:
+ *   get:
+ *     summary: Maneja rutas no encontradas
+ *     description: Middleware para manejar rutas no encontradas.
+ *     responses:
+ *       404:
+ *         description: Ruta no encontrada.
+ */
 app.use((req, res) => {
   res.status(400).json({ error: 'Ruta no encontrada' })
 })
 
-// Middleware para manejar métodos HTTP no implementados
+/**
+ * @swagger
+ * /:
+ *   all:
+ *     summary: Maneja métodos HTTP no implementados
+ *     description: Middleware para manejar métodos HTTP no implementados.
+ *     responses:
+ *       501:
+ *         description: Método HTTP no implementado.
+ */
 app.use((req, res) => {
   res.status(501).json({ error: 'Método HTTP no implementado' })
 })
