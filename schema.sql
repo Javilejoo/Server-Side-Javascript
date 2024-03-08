@@ -13,9 +13,9 @@ CREATE TABLE characters (
     epithet VARCHAR(100),
     occupation VARCHAR(100),
     bounty BIGINT,
-    devil_fruit VARCHAR(100),
-    image_url TEXT,
-    image_base64 TEXT,
+    devilFruit VARCHAR(100),
+    imageUrl TEXT,
+    imageBase64 TEXT,
     description TEXT
 );
 
