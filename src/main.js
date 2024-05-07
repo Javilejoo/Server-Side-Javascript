@@ -10,7 +10,6 @@ import {
 const app = express()
 app.use(express.json())
 app.use(cors())
-const port = 3010
 
 // Configuración de Swagger
 const options = {
@@ -254,9 +253,7 @@ app.use((req, res) => {
   res.status(501).json({ error: 'Método HTTP no implementado' })
 })
 
-app.listen(port, () => {
-  console.log(`Server listening at http://127.0.0.1:${port}`)
-})
+
 
 
 async function createTable() {
@@ -283,3 +280,6 @@ async function createTable() {
 }
 
 createTable();
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log( `Servidor corriendo en el puerto ${PORT}`));
