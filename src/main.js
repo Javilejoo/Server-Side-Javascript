@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import swaggerJsdoc from 'swagger-jsdoc'
 import swaggerUi from 'swagger-ui-express'
+import pool  from './conn.js'
 import {
   getAllCharacters, getCharacterById, createCharacter, deleteCharacterById, updateCharacterById,
 } from './db.js'
@@ -256,3 +257,29 @@ app.use((req, res) => {
 app.listen(port, () => {
   console.log(`Server listening at http://127.0.0.1:${port}`)
 })
+
+
+async function createTable() {
+  try {
+    const sql = `
+    CREATE TABLE characters (
+      id INT AUTO_INCREMENT PRIMARY KEY,
+      name VARCHAR(100) NOT NULL,
+      age INT,
+      epithet VARCHAR(100),
+      occupation VARCHAR(100),
+      bounty BIGINT,
+      devilFruit VARCHAR(100),
+      imageUrl TEXT,
+      imageBase64 TEXT,
+      description TEXT
+  );`;
+
+    await pool.query(sql);
+    console.log('La tabla ya existe.');
+  } catch (err) {
+    console.error('Error al crear la tabla', err);
+  }
+}
+
+createTable();
